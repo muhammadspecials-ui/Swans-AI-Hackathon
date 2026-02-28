@@ -467,9 +467,9 @@ tbody tr:last-child td{border-bottom:none}
               <div class="prog-wrap" style="height:6px"><div class="prog-bar" id="prog-bar"></div></div>
             </div>
             <div style="width:100%;max-width:320px">
-              <div class="prog-step curr" id="step1">📤 Uploading PDF to secure storage…</div>
-              <div class="prog-step" id="step2">📝 Creating case record in Airtable…</div>
-              <div class="prog-step" id="step3">⚡ Triggering workflow automation…</div>
+              <div class="prog-step curr" id="step1">📤 Uploading PDF — getting secure URL…</div>
+              <div class="prog-step" id="step2">📋 Packaging all case details…</div>
+              <div class="prog-step" id="step3">⚡ Sending to n8n — creating Airtable record…</div>
             </div>
           </div>
         </div>
@@ -1045,7 +1045,70 @@ function setStep(n) {
 }
 
 /* ═══════════════════════════════
+   PDF UPLOAD — tries 3 services to get a real https:// URL
+   Falls back to base64 data URL if all fail (n8n can decode it)
+═══════════════════════════════ */
+async function uploadPdfToStorage(file) {
+  // Try 1: file.io
+  try {
+    var fd1 = new FormData();
+    fd1.append('file', file);
+    var r1 = await fetch('https://file.io?expires=14d', { method: 'POST', body: fd1 });
+    if (r1.ok) {
+      var d1 = await r1.json();
+      if (d1.success && d1.link && d1.link.startsWith('https://')) {
+        console.log('[PDF Upload] Success via file.io:', d1.link);
+        return d1.link;
+      }
+    }
+  } catch(e1) { console.warn('[PDF Upload] file.io failed:', e1.message); }
+
+  // Try 2: 0x0.st
+  try {
+    var fd2 = new FormData();
+    fd2.append('file', file);
+    var r2 = await fetch('https://0x0.st', { method: 'POST', body: fd2 });
+    if (r2.ok) {
+      var url2 = (await r2.text()).trim();
+      if (url2.startsWith('https://')) {
+        console.log('[PDF Upload] Success via 0x0.st:', url2);
+        return url2;
+      }
+    }
+  } catch(e2) { console.warn('[PDF Upload] 0x0.st failed:', e2.message); }
+
+  // Try 3: catbox.moe
+  try {
+    var fd3 = new FormData();
+    fd3.append('reqtype', 'fileupload');
+    fd3.append('fileToUpload', file);
+    var r3 = await fetch('https://catbox.moe/user/api.php', { method: 'POST', body: fd3 });
+    if (r3.ok) {
+      var url3 = (await r3.text()).trim();
+      if (url3.startsWith('https://')) {
+        console.log('[PDF Upload] Success via catbox.moe:', url3);
+        return url3;
+      }
+    }
+  } catch(e3) { console.warn('[PDF Upload] catbox.moe failed:', e3.message); }
+
+  // Fallback: base64 data URL (still a valid URL, n8n can download/decode)
+  console.warn('[PDF Upload] All services failed — using base64 data URL fallback');
+  return new Promise(function(resolve, reject) {
+    var reader = new FileReader();
+    reader.onload  = function(e) { resolve(e.target.result); };
+    reader.onerror = function()  { reject(new Error('Failed to read PDF file locally')); };
+    reader.readAsDataURL(file);
+  });
+}
+
+/* ═══════════════════════════════
    SUBMIT
+   Architecture:
+     1. Upload PDF → get real https:// URL
+     2. POST ALL form fields to N8N webhook
+     3. N8N handles Airtable creation
+     4. Show success on 2xx response
 ═══════════════════════════════ */
 async function handleSubmit() {
   if (!validate()) {
@@ -1060,101 +1123,78 @@ async function handleSubmit() {
   setStep(1);
 
   try {
-    // ── STEP 1: Upload PDF ──
-    var pdfUrl = '';
-    try {
-      setProgress(15, 'Uploading PDF to secure storage…', 'Sending to file.io encrypted storage');
-      var fd = new FormData();
-      fd.append('file', selectedFile);
-      fd.append('expires', '14d');
-      var fioRes = await fetch('https://file.io?expires=14d', { method: 'POST', body: fd });
-      var fioData = await fioRes.json();
-      if (fioData.success && fioData.link) {
-        pdfUrl = fioData.link;
-      } else {
-        pdfUrl = 'PDF: ' + selectedFile.name + ' (' + (selectedFile.size/1024).toFixed(0) + 'KB) — ' + new Date().toISOString();
-      }
-    } catch(uploadErr) {
-      pdfUrl = selectedFile.name + ' — submitted ' + new Date().toLocaleString();
-    }
-    setProgress(40, 'PDF ready. Creating case record…', 'Writing to Airtable database');
+    // ── STEP 1: Upload PDF, get a real https:// URL ──
+    setProgress(15, 'Uploading PDF to secure storage…', 'Obtaining a real download URL for your document');
+    var pdfUrl = await uploadPdfToStorage(selectedFile);
+    console.log('[Submit] pdf_url resolved to:', pdfUrl.substring(0, 80));
+
+    setProgress(55, 'PDF ready! Sending case to workflow…', 'Posting all details to n8n automation');
     setStep(2);
-    await sleep(300);
+    await sleep(250);
 
-    // ── STEP 2: Create Airtable record with EXACT field names ──
-    var fields = {};
-    fields['Client First Name'] = document.getElementById('f-first').value.trim();
-    fields['Client Last Name']  = document.getElementById('f-last').value.trim();
-    fields['Client Email']      = document.getElementById('f-email').value.trim();
-    fields['Status']            = 'Lead';
+    // ── STEP 2: Build the full payload ──
+    // N8N receives everything and handles Airtable creation
+    var injVal = document.getElementById('f-inj').value;
+    var payload = {
+      // The real PDF URL (what n8n actually needs)
+      pdf_url:                 pdfUrl,
+      // Client identity
+      client_first_name:       document.getElementById('f-first').value.trim(),
+      client_last_name:        document.getElementById('f-last').value.trim(),
+      client_email:            document.getElementById('f-email').value.trim(),
+      // Case details — matching Airtable field names so n8n can map directly
+      responsible_attorney:    document.getElementById('f-attorney').value.trim() || 'Andrew Richards',
+      accident_date:           document.getElementById('f-accdate').value || '',
+      accident_location:       document.getElementById('f-accloc').value.trim() || '',
+      client_vehicle_plate:    document.getElementById('f-cvp').value.trim() || '',
+      defendant_name:          document.getElementById('f-def').value.trim() || '',
+      defendant_vehicle_plate: document.getElementById('f-dvp').value.trim() || '',
+      number_of_injuries:      injVal !== '' ? parseInt(injVal, 10) : null,
+      accident_description:    document.getElementById('f-desc').value.trim() || '',
+      police_report_number:    document.getElementById('f-prnum').value.trim() || '',
+      // Meta
+      submitted_at:            new Date().toISOString(),
+      source:                  'Richards & Law Portal'
+    };
 
-    var attorney = document.getElementById('f-attorney').value.trim();
-    if (attorney) fields['Responsible Attorney'] = attorney;
-
-    var accDate = document.getElementById('f-accdate').value;
-    if (accDate) fields['Accident Date'] = accDate;
-
-    var accLoc = document.getElementById('f-accloc').value.trim();
-    if (accLoc) fields['Accident Location'] = accLoc;
-
-    var cvp = document.getElementById('f-cvp').value.trim();
-    if (cvp) fields['Client Vehicle Plate'] = cvp;
-
-    var def = document.getElementById('f-def').value.trim();
-    if (def) fields['Defendant Name'] = def;
-
-    var dvp = document.getElementById('f-dvp').value.trim();
-    if (dvp) fields['Defendant Vehicle Plate'] = dvp;
-
-    var inj = document.getElementById('f-inj').value;
-    if (inj !== '') fields['Number of Injuries'] = parseInt(inj, 10);
-
-    var desc = document.getElementById('f-desc').value.trim();
-    if (desc) fields['Accident Description'] = desc;
-
-    var prnum = document.getElementById('f-prnum').value.trim();
-    if (prnum) fields['Police Report Number'] = prnum;
-
-    if (pdfUrl) fields['Retainer PDF URL'] = pdfUrl;
-
-    setProgress(60, 'Creating case in Airtable…', 'Saving all case details');
-    var newRecord = await createRecord(fields);
-    setProgress(80, 'Case created! Triggering automation…', 'Sending webhook to workflow');
     setStep(3);
-    await sleep(300);
+    setProgress(75, 'Triggering workflow automation…', 'n8n is creating your Airtable record');
 
-    // ── STEP 3: N8N Webhook (non-fatal) ──
-    try {
-      await fetch(N8N_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          pdf_url: pdfUrl,
-          record_id: newRecord.id,
-          client_email: fields['Client Email'],
-          client_name: fields['Client First Name'] + ' ' + fields['Client Last Name'],
-          matter_id: (newRecord.fields && newRecord.fields['Matter ID']) ? newRecord.fields['Matter ID'] : '',
-          attorney: fields['Responsible Attorney'] || 'Andrew Richards'
-        })
-      });
-    } catch(whErr) { /* non-fatal */ }
+    // ── STEP 3: POST to N8N — THE only external call ──
+    var n8nRes = await fetch(N8N_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
 
-    setProgress(100, 'All done!', 'Case submitted successfully');
+    // Treat any 2xx as success
+    if (!n8nRes.ok) {
+      var errBody = '';
+      try { errBody = await n8nRes.text(); } catch(te) {}
+      throw new Error('Workflow rejected the request (HTTP ' + n8nRes.status + '). ' + (errBody ? 'Details: ' + errBody.substring(0, 200) : ''));
+    }
+
+    setProgress(100, 'All done!', 'n8n is processing your case');
     await sleep(500);
 
+    // Show success
     document.getElementById('loading-state').style.display = 'none';
     document.getElementById('success-state').style.display = 'block';
 
-    // Invalidate cache so next load is fresh
+    // Bust the records cache so dashboard re-fetches with the new record n8n just created
     allRecords = [];
 
-    toast('Case created for ' + fields['Client First Name'] + ' ' + fields['Client Last Name'], 's', 'Submission Complete');
+    toast(
+      payload.client_first_name + ' ' + payload.client_last_name + ' — case sent to workflow successfully',
+      's',
+      'Submission Complete'
+    );
 
   } catch(err) {
     document.getElementById('loading-state').style.display = 'none';
     document.getElementById('form-state').style.display = 'block';
     toast(err.message || 'Submission failed. Please try again.', 'e', 'Submission Failed');
-    console.error('Submit error:', err);
+    console.error('[Submit] Error:', err);
   }
 }
 
