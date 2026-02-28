@@ -1060,24 +1060,36 @@ async function handleSubmit() {
   setStep(1);
 
   try {
-    // ── STEP 1: Upload PDF to Cloudinary ──
+    // STEP 1: Upload PDF (tries multiple free services)
     var pdfUrl = '';
-    try {
-      setProgress(15, 'Uploading PDF to secure storage…', 'Sending to Cloudinary');
-      var fd = new FormData();
-      fd.append('file', selectedFile);
-      fd.append('upload_preset', 'report');
-      fd.append('resource_type', 'raw');
-      var cldRes = await fetch('https://api.cloudinary.com/v1_1/dovacjkov/raw/upload', {
-        method: 'POST',
-        body: fd
-      });
-      var cldData = await cldRes.json();
-      if (cldData.secure_url) {
-        pdfUrl = cldData.secure_url;
-      } else {
-        throw new Error(cldData.error ? cldData.error.message : 'Upload failed');
+    var uploadServices = [
+      async function() {
+        var fd = new FormData();
+        fd.append('file', selectedFile);
+        var res = await fetch('https://tmpfiles.org/api/v1/upload', { method: 'POST', body: fd });
+        var data = await res.json();
+        if (data && data.data && data.data.url) {
+          return data.data.url.replace('tmpfiles.org/', 'tmpfiles.org/dl/');
+        }
+        throw new Error('tmpfiles failed');
+      },
+      async function() {
+        var fd = new FormData();
+        fd.append('file', selectedFile);
+        fd.append('expires', '14d');
+        var res = await fetch('https://file.io?expires=14d', { method: 'POST', body: fd });
+        var data = await res.json();
+        if (data.success && data.link) return data.link;
+        throw new Error('file.io failed');
       }
+    ];
+    try {
+      setProgress(15, 'Uploading PDF to secure storage...', 'Please wait...');
+      var lastErr = null;
+      for (var i = 0; i < uploadServices.length; i++) {
+        try { pdfUrl = await uploadServices[i](); if (pdfUrl) break; } catch(e) { lastErr = e; }
+      }
+      if (!pdfUrl) throw lastErr || new Error('All upload services failed');
     } catch(uploadErr) {
       console.warn('PDF upload failed:', uploadErr);
       toast('PDF upload failed: ' + uploadErr.message, 'e', 'Upload Error');
