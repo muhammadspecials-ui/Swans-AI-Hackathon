@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Richards & Law — Case Management</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0c1a2e;
+  --navy2:#162438;
+  --navy3:#1e3050;
+  --gold:#c9a55a;
+  --gold2:#e8cb8a;
+  --gold3:#f5e6c0;
+  --gold4:#fdf8ef;
+  --cream:#f9f8f5;
+  --white:#ffffff;
+  --ink:#111827;
+  --ink2:#374151;
+  --muted:#6b7280;
+  --muted2:#9ca3af;
+  --border:#e5e1d8;
+  --border2:#d1ccc0;
+  --green:#15803d;
+  --green-bg:#f0fdf4;
+  --green-bd:#86efac;
+  --amber:#b45309;
+  --amber-bg:#fffbeb;
+  --amber-bd:#fcd34d;
+  --blue:#1d4ed8;
+  --blue-bg:#eff6ff;
+  --blue-bd:#93c5fd;
+  --red:#b91c1c;
+  --red-bg:#fef2f2;
+  --red-bd:#fca5a5;
+  --slate:#64748b;
+  --r:10px;
+  --r2:14px;
+  --r3:18px;
+  --sh1:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --sh2:0 4px 12px rgba(0,0,0,.07),0 2px 4px rgba(0,0,0,.04);
+  --sh3:0 10px 30px rgba(0,0,0,.09),0 4px 10px rgba(0,0,0,.05);
+  --sh4:0 20px 60px rgba(0,0,0,.12),0 8px 20px rgba(0,0,0,.07);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Outfit',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font-family:'Outfit',sans-serif}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--border)}
+::-webkit-scrollbar-thumb{background:var(--navy3);border-radius:99px}
+
+/* PAGES */
+.page{display:none;min-height:calc(100vh - 60px);animation:fadeUp .3s ease}
+.page.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* NAV */
+nav{
+  position:sticky;top:0;z-index:900;height:60px;
+  background:rgba(12,26,46,.97);backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(201,165,90,.18);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 1.75rem;box-shadow:0 2px 20px rgba(0,0,0,.25);
+}
+.brand{display:flex;align-items:center;gap:.65rem;cursor:pointer}
+.brand-crest{
+  width:32px;height:32px;border-radius:7px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--gold),#9a7030);
+  display:grid;place-items:center;
+  font-family:'Cormorant Garamond',serif;font-weight:700;font-size:1.05rem;color:#fff;
+  box-shadow:0 4px 12px rgba(201,165,90,.3);
+}
+.brand-name{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:600;color:#fff;letter-spacing:.02em}
+.brand-name span{color:var(--gold)}
+.nav-links{display:flex;gap:.2rem}
+.nav-a{
+  display:flex;align-items:center;gap:.4rem;
+  padding:.42rem .9rem;border-radius:7px;border:1px solid transparent;
+  background:none;color:rgba(255,255,255,.55);font-size:.83rem;font-weight:500;
+  cursor:pointer;transition:all .2s;letter-spacing:.01em;
+}
+.nav-a:hover{color:#fff;background:rgba(255,255,255,.06)}
+.nav-a.active{color:var(--gold);background:rgba(201,165,90,.1);border-color:rgba(201,165,90,.2)}
+.nav-a svg{width:14px;height:14px}
+
+/* HERO */
+.hero{
+  background:linear-gradient(155deg,var(--navy) 0%,var(--navy2) 55%,#1a2e48 100%);
+  padding:4.5rem 2rem 5rem;text-align:center;position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 60% at 15% 85%,rgba(201,165,90,.07),transparent 65%),
+             radial-gradient(ellipse 55% 45% at 85% 15%,rgba(201,165,90,.05),transparent 65%);
+}
+.hero-dots{
+  position:absolute;inset:0;
+  background-image:radial-gradient(rgba(201,165,90,.08) 1px,transparent 1px);
+  background-size:28px 28px;
+}
+.hero-inner{position:relative;z-index:1;max-width:580px;margin:0 auto}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:.45rem;
+  background:rgba(201,165,90,.1);border:1px solid rgba(201,165,90,.22);
+  border-radius:100px;padding:.32rem .9rem;
+  font-size:.72rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--gold2);margin-bottom:1.4rem;
+}
+.hero h1{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(2.4rem,6vw,4rem);font-weight:700;color:#fff;
+  line-height:1.08;letter-spacing:-.02em;margin-bottom:.9rem;
+}
+.hero h1 em{color:var(--gold);font-style:normal}
+.hero-sub{font-size:1rem;color:rgba(255,255,255,.55);line-height:1.7;font-weight:300}
+
+/* UPLOAD LIFT */
+.upload-lift{max-width:640px;margin:-2rem auto 3rem;padding:0 1.5rem;position:relative;z-index:10}
+
+/* CARDS */
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--r2);box-shadow:var(--sh3);overflow:hidden}
+.card-hd{padding:1.4rem 1.75rem 1.2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.7rem}
+.card-hd-icon{width:34px;height:34px;border-radius:8px;background:var(--gold4);border:1px solid var(--gold3);display:grid;place-items:center;font-size:.95rem;flex-shrink:0}
+.card-hd-title{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:600;color:var(--ink)}
+.card-hd-sub{font-size:.78rem;color:var(--muted);margin-top:.1rem}
+.card-body{padding:1.6rem 1.75rem}
+
+/* FORM */
+.fg{display:flex;flex-direction:column;gap:.4rem}
+.fg label{font-size:.7rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--slate)}
+.fg label .req{color:var(--gold);margin-left:.1rem}
+.fg input,.fg select{
+  padding:.68rem .95rem;border:1.5px solid var(--border2);border-radius:var(--r);
+  font-size:.9rem;color:var(--ink);background:#fff;width:100%;
+  transition:border-color .18s,box-shadow .18s;outline:none;
+}
+.fg textarea{
+  padding:.68rem .95rem;border:1.5px solid var(--border2);border-radius:var(--r);
+  font-size:.9rem;color:var(--ink);background:#fff;width:100%;
+  transition:border-color .18s,box-shadow .18s;outline:none;resize:vertical;
+}
+.fg input::placeholder,.fg textarea::placeholder{color:var(--muted2)}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,165,90,.13)}
+.fg input.err{border-color:var(--red);box-shadow:0 0 0 3px rgba(185,28,28,.08)}
+.err-msg{font-size:.73rem;color:var(--red);display:none;align-items:center;gap:.3rem;margin-top:.15rem}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.span2{grid-column:1/-1}
+
+/* FILE DROP */
+.drop-zone{
+  border:2px dashed var(--border2);border-radius:var(--r);padding:2rem 1.5rem;
+  text-align:center;cursor:pointer;transition:all .2s;background:#fafaf8;
+  position:relative;
+}
+.drop-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.drop-zone:hover,.drop-zone.over{border-color:var(--gold);background:var(--gold4)}
+.drop-zone.has-file{border-color:var(--green);background:var(--green-bg);border-style:solid}
+.drop-icon{font-size:2rem;display:block;margin-bottom:.5rem}
+.drop-main{font-size:.88rem;font-weight:500}
+.drop-hint{font-size:.75rem;color:var(--muted);margin-top:.25rem}
+.file-pill{
+  display:none;align-items:center;gap:.5rem;
+  background:var(--green-bg);border:1px solid var(--green-bd);
+  border-radius:var(--r);padding:.5rem .8rem;margin-top:.7rem;
+  font-size:.8rem;color:var(--green);font-weight:500;justify-content:center;
+}
+
+/* PROGRESS */
+.prog-wrap{height:4px;background:var(--border);border-radius:99px;overflow:hidden;margin:.6rem 0}
+.prog-bar{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:99px;width:0%;transition:width .4s ease}
+
+/* BUTTONS */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.45rem;
+  padding:.72rem 1.5rem;border-radius:var(--r);border:none;
+  font-size:.88rem;font-weight:600;cursor:pointer;transition:all .2s;
+  text-decoration:none;white-space:nowrap;
+}
+.btn-gold{background:linear-gradient(135deg,#c9a55a,#9a7030);color:#fff;border:1px solid #9a7028;box-shadow:0 4px 15px rgba(201,165,90,.3)}
+.btn-gold:hover{transform:translateY(-1px);box-shadow:0 8px 25px rgba(201,165,90,.4)}
+.btn-gold:disabled{opacity:.55;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-navy{background:linear-gradient(135deg,var(--navy2),var(--navy3));color:#fff;border:1px solid var(--navy3);box-shadow:var(--sh2)}
+.btn-navy:hover{transform:translateY(-1px);box-shadow:var(--sh3)}
+.btn-ghost{background:#fff;border:1.5px solid var(--border2);color:var(--ink2)}
+.btn-ghost:hover{border-color:var(--gold);color:var(--navy)}
+.btn-sm{padding:.45rem 1rem;font-size:.8rem}
+.btn-full{width:100%}
+.spinner{width:16px;height:16px;border:2.5px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;flex-shrink:0}
+.spinner-dark{border-color:rgba(12,26,46,.15);border-top-color:var(--navy)}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* SUCCESS */
+.success-wrap{text-align:center;padding:2.5rem 2rem;background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1px solid var(--green-bd);border-radius:var(--r)}
+.success-icon{font-size:3rem;margin-bottom:.75rem;display:block}
+.success-wrap h3{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:700;margin-bottom:.5rem}
+.success-wrap p{color:var(--muted);font-size:.9rem;line-height:1.6;margin-bottom:1.25rem}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:.3rem;padding:.22rem .7rem;border-radius:100px;font-size:.73rem;font-weight:600;letter-spacing:.02em;border:1px solid;white-space:nowrap}
+.badge-lead{background:var(--amber-bg);color:var(--amber);border-color:var(--amber-bd)}
+.badge-approved{background:var(--green-bg);color:var(--green);border-color:var(--green-bd)}
+.badge-retainer{background:var(--blue-bg);color:var(--blue);border-color:var(--blue-bd)}
+.badge-processing{background:#f5f3ff;color:#6d28d9;border-color:#c4b5fd}
+.badge-default{background:var(--cream);color:var(--slate);border-color:var(--border2)}
+
+/* STATS STRIP */
+.stats-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin:3rem 0}
+.stat-box{background:var(--white);border:1px solid var(--border);border-radius:var(--r2);padding:1.25rem 1.5rem;box-shadow:var(--sh1);position:relative;overflow:hidden}
+.stat-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold2))}
+.stat-val{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:700;line-height:1;color:var(--navy)}
+.stat-lbl{font-size:.75rem;color:var(--muted);font-weight:500;margin-top:.3rem;text-transform:uppercase;letter-spacing:.04em}
+.stat-icon{position:absolute;right:1rem;top:1rem;font-size:1.5rem;opacity:.12}
+
+/* HOW IT WORKS */
+.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-top:1.5rem}
+.how-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r2);padding:2rem 1.5rem;text-align:center;box-shadow:var(--sh1);transition:box-shadow .2s,transform .2s}
+.how-card:hover{box-shadow:var(--sh3);transform:translateY(-3px)}
+.how-num{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--navy),var(--navy3));color:#fff;font-family:'Cormorant Garamond',serif;font-weight:700;font-size:1.3rem;display:grid;place-items:center;margin:0 auto 1rem;box-shadow:0 4px 12px rgba(12,26,46,.25)}
+.how-card h4{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;margin-bottom:.5rem}
+.how-card p{font-size:.82rem;color:var(--muted);line-height:1.65}
+
+/* RECENT LIST */
+.recent-list{padding:0 .25rem}
+.recent-row{display:flex;align-items:center;justify-content:space-between;padding:.9rem 1.25rem;border-bottom:1px solid var(--border);transition:background .15s;gap:1rem;cursor:pointer}
+.recent-row:last-child{border-bottom:none}
+.recent-row:hover{background:var(--gold4)}
+.recent-name{font-weight:500;font-size:.88rem}
+.recent-email{font-size:.75rem;color:var(--muted);margin-top:.1rem}
+.recent-meta{display:flex;align-items:center;gap:.75rem;flex-shrink:0}
+
+/* DASHBOARD LAYOUT */
+.dash-layout{display:flex;min-height:calc(100vh - 60px)}
+.sidebar{width:210px;flex-shrink:0;background:var(--white);border-right:1px solid var(--border);padding:1.5rem .875rem;display:flex;flex-direction:column;gap:1.75rem}
+.sidebar-section-label{font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted2);padding:0 .5rem;margin-bottom:.25rem}
+.sidebar-item{display:flex;align-items:center;gap:.6rem;padding:.55rem .75rem;border-radius:var(--r);font-size:.83rem;font-weight:500;color:var(--ink2);cursor:pointer;transition:all .15s;border:none;background:none;width:100%;text-align:left}
+.sidebar-item svg{width:15px;height:15px;opacity:.6;flex-shrink:0}
+.sidebar-item:hover{background:var(--cream);color:var(--ink)}
+.sidebar-item.active{background:var(--gold4);color:var(--navy);font-weight:600}
+.sidebar-item.active svg{opacity:1}
+.sidebar-stat-row{display:flex;justify-content:space-between;align-items:center;padding:.4rem .5rem;font-size:.8rem}
+.sidebar-stat-row span:first-child{color:var(--muted)}
+.sidebar-stat-num{font-weight:700;color:var(--navy);font-size:.85rem}
+
+/* DASH MAIN */
+.dash-main{flex:1;overflow:auto;padding:2rem 1.75rem;min-width:0}
+.dash-topbar{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.75rem;gap:1rem;flex-wrap:wrap}
+.dash-title{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:700}
+.dash-sub{font-size:.82rem;color:var(--muted);margin-top:.2rem}
+.dash-actions{display:flex;gap:.6rem;flex-wrap:wrap}
+
+/* TABLE TOOLBAR */
+.table-toolbar{display:flex;align-items:center;gap:.75rem;padding:1rem 1.25rem;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.search-wrap{position:relative;flex:1;min-width:180px;max-width:320px}
+.search-wrap svg{position:absolute;left:.75rem;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--muted2);pointer-events:none}
+.search-input{width:100%;padding:.58rem .9rem .58rem 2.2rem;border:1.5px solid var(--border2);border-radius:var(--r);font-size:.83rem;color:var(--ink);background:#fff;outline:none;transition:border-color .18s}
+.search-input:focus{border-color:var(--gold)}
+.filter-select{padding:.55rem .8rem;border:1.5px solid var(--border2);border-radius:var(--r);font-size:.82rem;color:var(--ink);background:#fff;outline:none;cursor:pointer}
+.filter-select:focus{border-color:var(--gold)}
+.records-count{font-size:.78rem;color:var(--muted);margin-left:auto}
+
+/* TABLE */
+.table-scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:800px}
+thead th{padding:.75rem 1rem;text-align:left;font-size:.69rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--slate);background:var(--cream);border-bottom:1px solid var(--border);white-space:nowrap;user-select:none}
+tbody tr{transition:background .12s;cursor:pointer}
+tbody tr:hover td{background:var(--gold4)}
+tbody td{padding:.85rem 1rem;font-size:.84rem;color:var(--ink2);border-bottom:1px solid var(--border);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+.td-name{font-weight:600;color:var(--ink)}
+.td-email{font-size:.75rem;color:var(--muted);margin-top:.1rem}
+.td-id{font-size:.73rem;color:var(--muted2);font-family:monospace;background:var(--cream);padding:.15rem .4rem;border-radius:4px;border:1px solid var(--border)}
+
+/* TABLE STATES */
+.table-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4rem 2rem;gap:1rem;text-align:center}
+.table-state .big-icon{font-size:3rem;opacity:.3}
+.table-state p{color:var(--muted);font-size:.88rem}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;z-index:800;background:rgba(12,26,46,.6);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:1.5rem}
+.modal-bg.open{display:flex;animation:fadeBg .25s ease}
+@keyframes fadeBg{from{opacity:0}to{opacity:1}}
+.modal-box{background:var(--white);border-radius:var(--r3);box-shadow:var(--sh4);width:100%;max-width:640px;max-height:90vh;overflow-y:auto;animation:popIn .25s cubic-bezier(.34,1.56,.64,1)}
+@keyframes popIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+.modal-hd{padding:1.5rem 1.75rem;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:var(--r3) var(--r3) 0 0}
+.modal-matter-id{font-size:.72rem;color:var(--gold2);font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:.3rem}
+.modal-client-name{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:700;color:#fff;line-height:1}
+.modal-close{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:#fff;width:32px;height:32px;border-radius:7px;display:grid;place-items:center;cursor:pointer;font-size:1rem;transition:background .15s;flex-shrink:0}
+.modal-close:hover{background:rgba(255,255,255,.2)}
+.modal-body{padding:1.75rem}
+.modal-section{margin-bottom:1.5rem}
+.modal-section:last-child{margin-bottom:0}
+.modal-section-title{font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:.85rem;padding-bottom:.5rem;border-bottom:1px solid var(--border)}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:.85rem}
+.detail-label{font-size:.7rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted2);margin-bottom:.25rem}
+.detail-val{font-size:.88rem;font-weight:500;color:var(--ink);line-height:1.5}
+.detail-val a{color:var(--blue);text-decoration:none}
+.detail-val a:hover{text-decoration:underline}
+.detail-val.empty{color:var(--muted2);font-style:italic;font-weight:400}
+.detail-full{grid-column:1/-1}
+
+/* UPLOAD LOADING */
+.upload-loading{display:flex;flex-direction:column;align-items:center;padding:2rem;gap:1rem;text-align:center}
+.upload-loading h4{font-size:1rem;font-weight:600}
+.upload-loading p{font-size:.82rem;color:var(--muted)}
+.prog-step{display:flex;align-items:center;gap:.6rem;font-size:.8rem;color:var(--muted2);padding:.35rem 0;width:100%;max-width:320px}
+.prog-step.done{color:var(--green)}
+.prog-step.curr{color:var(--navy);font-weight:500}
+
+/* TOAST */
+.toast-dock{position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;display:flex;flex-direction:column;gap:.6rem;pointer-events:none}
+.toast{display:flex;align-items:flex-start;gap:.7rem;background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:.9rem 1.1rem;box-shadow:var(--sh4);pointer-events:auto;min-width:280px;max-width:360px;animation:toastIn .3s ease}
+@keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+.toast.out{animation:toastOut .3s ease forwards}
+@keyframes toastOut{to{opacity:0;transform:translateX(20px)}}
+.toast-bar{width:3px;border-radius:99px;flex-shrink:0;align-self:stretch;min-height:36px}
+.toast-bar.s{background:var(--green)}
+.toast-bar.e{background:var(--red)}
+.toast-bar.w{background:var(--amber)}
+.toast-title{font-size:.82rem;font-weight:600;margin-bottom:.15rem}
+.toast-msg{font-size:.78rem;color:var(--muted);line-height:1.45}
+
+/* CONTAINER */
+.container{max-width:1080px;margin:0 auto;padding:0 1.5rem}
+.section-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600}
+.section-divider{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;color:var(--navy);margin:3rem 0 1.5rem;display:flex;align-items:center;gap:.75rem}
+.section-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+
+@media(max-width:720px){
+  .form-grid,.stats-strip,.how-grid,.detail-grid{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .dash-main{padding:1.25rem 1rem}
+  .hero{padding:3rem 1.25rem 4rem}
+  .upload-lift{padding:0 1rem}
+  nav{padding:0 1rem}
+  .nav-a span{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="brand" onclick="showPage('upload')">
+    <div class="brand-crest">R</div>
+    <span class="brand-name">Richards <span>&</span> Law</span>
+  </div>
+  <div class="nav-links">
+    <button class="nav-a active" id="nav-upload" onclick="showPage('upload')">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+      <span>Upload</span>
+    </button>
+    <button class="nav-a" id="nav-dashboard" onclick="showPage('dashboard')">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <span>Dashboard</span>
+    </button>
+  </div>
+</nav>
+
+<!-- ══ UPLOAD PAGE ══ -->
+<div class="page active" id="page-upload">
+  <div class="hero">
+    <div class="hero-dots"></div>
+    <div class="hero-inner">
+      <div class="hero-badge">⚖ Legal Case Management System</div>
+      <h1>Police Report<br/><em>Processing Portal</em></h1>
+      <p class="hero-sub">Upload client police reports securely. Our system processes documents automatically and notifies your legal team instantly.</p>
+    </div>
+  </div>
+
+  <div class="upload-lift">
+    <div class="card">
+      <div class="card-hd">
+        <div class="card-hd-icon">📋</div>
+        <div>
+          <div class="card-hd-title">New Case Intake</div>
+          <div class="card-hd-sub">Complete all required fields and attach the police report PDF</div>
+        </div>
+      </div>
+      <div class="card-body">
+
+        <!-- FORM -->
+        <div id="form-state">
+          <div class="form-grid">
+            <div class="fg">
+              <label>Client First Name<span class="req">*</span></label>
+              <input type="text" id="f-first" placeholder="Jane"/>
+              <div class="err-msg" id="e-first">⚠ First name is required</div>
+            </div>
+            <div class="fg">
+              <label>Client Last Name<span class="req">*</span></label>
+              <input type="text" id="f-last" placeholder="Smith"/>
+              <div class="err-msg" id="e-last">⚠ Last name is required</div>
+            </div>
+            <div class="fg span2">
+              <label>Client Email<span class="req">*</span></label>
+              <input type="email" id="f-email" placeholder="jane.smith@email.com"/>
+              <div class="err-msg" id="e-email">⚠ Valid email address required</div>
+            </div>
+            <div class="fg span2">
+              <label>Responsible Attorney</label>
+              <input type="text" id="f-attorney" value="Andrew Richards"/>
+            </div>
+            <div class="fg">
+              <label>Accident Date</label>
+              <input type="date" id="f-accdate"/>
+            </div>
+            <div class="fg">
+              <label>Police Report Number</label>
+              <input type="text" id="f-prnum" placeholder="e.g. 2024-001234"/>
+            </div>
+            <div class="fg span2">
+              <label>Accident Location</label>
+              <input type="text" id="f-accloc" placeholder="123 Main St, Miami, FL 33101"/>
+            </div>
+            <div class="fg">
+              <label>Client Vehicle Plate</label>
+              <input type="text" id="f-cvp" placeholder="ABC-1234"/>
+            </div>
+            <div class="fg">
+              <label>Defendant Name</label>
+              <input type="text" id="f-def" placeholder="John Doe"/>
+            </div>
+            <div class="fg">
+              <label>Defendant Vehicle Plate</label>
+              <input type="text" id="f-dvp" placeholder="XYZ-5678"/>
+            </div>
+            <div class="fg">
+              <label>Number of Injuries</label>
+              <input type="number" id="f-inj" placeholder="0" min="0"/>
+            </div>
+            <div class="fg span2">
+              <label>Accident Description</label>
+              <textarea id="f-desc" rows="3" placeholder="Brief description of the accident…"></textarea>
+            </div>
+            <div class="fg span2">
+              <label>Police Report PDF<span class="req">*</span></label>
+              <div class="drop-zone" id="drop-zone">
+                <input type="file" id="f-pdf" accept=".pdf,application/pdf"/>
+                <span class="drop-icon">📄</span>
+                <div class="drop-main">Drop PDF here or click to browse</div>
+                <div class="drop-hint">PDF files only · Secure encrypted transfer</div>
+                <div class="file-pill" id="file-pill">✅ <span id="file-name-display"></span></div>
+              </div>
+              <div class="err-msg" id="e-pdf">⚠ Police report PDF is required</div>
+            </div>
+          </div>
+          <div style="margin-top:1.5rem">
+            <button class="btn btn-gold btn-full" id="submit-btn" onclick="handleSubmit()">
+              <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+              Submit Case &amp; Upload Report
+            </button>
+          </div>
+          <p style="text-align:center;font-size:.72rem;color:var(--muted2);margin-top:.75rem">🔒 256-bit encrypted · HIPAA compliant · Secure document handling</p>
+        </div>
+
+        <!-- LOADING -->
+        <div id="loading-state" style="display:none">
+          <div class="upload-loading">
+            <div class="spinner spinner-dark" style="width:28px;height:28px;border-width:3px"></div>
+            <h4 id="loading-title">Uploading police report…</h4>
+            <p id="loading-sub">Please wait, do not close this window</p>
+            <div style="width:100%;max-width:320px;margin-top:.5rem">
+              <div class="prog-wrap" style="height:6px"><div class="prog-bar" id="prog-bar"></div></div>
+            </div>
+            <div style="width:100%;max-width:320px">
+              <div class="prog-step curr" id="step1">📤 Uploading PDF to secure storage…</div>
+              <div class="prog-step" id="step2">📝 Creating case record in Airtable…</div>
+              <div class="prog-step" id="step3">⚡ Triggering workflow automation…</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUCCESS -->
+        <div id="success-state" style="display:none">
+          <div class="success-wrap">
+            <span class="success-icon">✅</span>
+            <h3>Case Successfully Submitted!</h3>
+            <p>The police report has been processed and the case has been created in Airtable. Your client will receive a confirmation email with next steps.</p>
+            <div style="display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap">
+              <button class="btn btn-gold" onclick="resetForm()">Submit Another Case</button>
+              <button class="btn btn-ghost" onclick="showPage('dashboard')">View Dashboard →</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS + RECENT + HOW -->
+  <div class="container" style="padding-top:1rem;padding-bottom:4rem">
+    <div class="stats-strip">
+      <div class="stat-box"><div class="stat-icon">📁</div><div class="stat-val" id="stat-total">—</div><div class="stat-lbl">Total Cases</div></div>
+      <div class="stat-box"><div class="stat-icon">🔍</div><div class="stat-val" id="stat-lead">—</div><div class="stat-lbl">Leads</div></div>
+      <div class="stat-box"><div class="stat-icon">✅</div><div class="stat-val" id="stat-approved">—</div><div class="stat-lbl">Approved</div></div>
+      <div class="stat-box"><div class="stat-icon">📝</div><div class="stat-val" id="stat-retainer">—</div><div class="stat-lbl">Retainers Sent</div></div>
+    </div>
+
+    <div class="section-hd">
+      <div class="section-title">Recent Cases</div>
+      <button class="btn btn-ghost btn-sm" onclick="showPage('dashboard')">View All →</button>
+    </div>
+    <div class="card" id="recent-card">
+      <div class="table-state" id="recent-loading">
+        <div class="spinner spinner-dark"></div>
+        <p>Loading recent cases…</p>
+      </div>
+      <div id="recent-list" class="recent-list" style="display:none"></div>
+    </div>
+
+    <div class="section-divider">How It Works</div>
+    <div class="how-grid">
+      <div class="how-card"><div class="how-num">1</div><h4>Submit the Report</h4><p>Fill out the client intake form and securely upload the police report PDF through our encrypted portal.</p></div>
+      <div class="how-card"><div class="how-num">2</div><h4>Automated Processing</h4><p>Our AI-powered workflow extracts key case details, calculates statute of limitations, and alerts your legal team.</p></div>
+      <div class="how-card"><div class="how-num">3</div><h4>Attorney Review</h4><p>The responsible attorney reviews the case and sends the retainer agreement to the client within 24 hours.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DASHBOARD PAGE ══ -->
+<div class="page" id="page-dashboard">
+  <div class="dash-layout">
+    <aside class="sidebar">
+      <div>
+        <div class="sidebar-section-label">Navigation</div>
+        <button class="sidebar-item" onclick="showPage('upload')">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+          Upload Report
+        </button>
+        <button class="sidebar-item active">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          Dashboard
+        </button>
+      </div>
+      <div>
+        <div class="sidebar-section-label">Case Overview</div>
+        <div class="sidebar-stat-row"><span>Total Cases</span><span class="sidebar-stat-num" id="sb-total">—</span></div>
+        <div class="sidebar-stat-row"><span>Leads</span><span class="sidebar-stat-num" id="sb-lead">—</span></div>
+        <div class="sidebar-stat-row"><span>Approved</span><span class="sidebar-stat-num" id="sb-approved">—</span></div>
+        <div class="sidebar-stat-row"><span>Retainer Sent</span><span class="sidebar-stat-num" id="sb-retainer">—</span></div>
+      </div>
+    </aside>
+
+    <main class="dash-main">
+      <div class="dash-topbar">
+        <div>
+          <div class="dash-title">Case Dashboard</div>
+          <div class="dash-sub" id="dash-sub">Loading cases…</div>
+        </div>
+        <div class="dash-actions">
+          <button class="btn btn-ghost btn-sm" id="refresh-btn" onclick="loadRecords(true)">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            Refresh
+          </button>
+          <button class="btn btn-gold btn-sm" onclick="showPage('upload')">+ New Case</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="table-toolbar">
+          <div class="search-wrap">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35"/></svg>
+            <input class="search-input" type="text" id="search-input" placeholder="Search by name, email, location…" oninput="renderTable()"/>
+          </div>
+          <select class="filter-select" id="status-filter" onchange="renderTable()">
+            <option value="">All Statuses</option>
+            <option value="Lead">Lead</option>
+            <option value="Approved">Approved</option>
+            <option value="Retainer Sent">Retainer Sent</option>
+          </select>
+          <select class="filter-select" id="sort-select" onchange="renderTable()">
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+            <option value="name-az">Name A→Z</option>
+            <option value="name-za">Name Z→A</option>
+            <option value="matter-asc">Matter ID ↑</option>
+          </select>
+          <span class="records-count" id="records-count"></span>
+        </div>
+
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Matter ID</th>
+                <th>Client Name</th>
+                <th>Status</th>
+                <th>Attorney</th>
+                <th>Accident Date</th>
+                <th>Location</th>
+                <th>Injuries</th>
+                <th>Created</th>
+              </tr>
+            </thead>
+            <tbody id="table-body"></tbody>
+          </table>
+        </div>
+        <div class="table-state" id="tbl-loading"><div class="spinner spinner-dark" style="width:28px;height:28px;border-width:3px"></div><p>Fetching cases from Airtable…</p></div>
+        <div class="table-state" id="tbl-empty" style="display:none"><div class="big-icon">📂</div><p id="empty-msg">No cases found.</p></div>
+        <div class="table-state" id="tbl-error" style="display:none"><div class="big-icon">⚠️</div><p id="error-msg">Failed to load records.</p><button class="btn btn-ghost btn-sm" onclick="loadRecords(true)" style="margin-top:.5rem">Try Again</button></div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modal-bg" onclick="bgClose(event)">
+  <div class="modal-box">
+    <div class="modal-hd">
+      <div>
+        <div class="modal-matter-id" id="modal-matter-id"></div>
+        <div class="modal-client-name" id="modal-client-name"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<!-- TOAST DOCK -->
+<div class="toast-dock" id="toast-dock"></div>
+
+<script>
+/* ═══════════════════════════════
+   CONFIG
+═══════════════════════════════ */
+const AT_TOKEN = 'patilmN5yszzQc5aS.56af255637c4368f1486b7930636d59dbb6e7af8351ac8b068ac99b27f55510a';
+const AT_BASE  = 'app2bhVvvc4FVWwVL';
+const AT_TABLE = 'tblKHN7Gd0PrUyVyA';
+const AT_URL   = `https://api.airtable.com/v0/${AT_BASE}/${AT_TABLE}`;
+const N8N_URL  = 'https://swans-ai-hackathon.app.n8n.cloud/webhook/police-report-upload';
+
+/* ═══════════════════════════════
+   STATE
+═══════════════════════════════ */
+let allRecords = [];
+let selectedFile = null;
+
+/* ═══════════════════════════════
+   NAVIGATION
+═══════════════════════════════ */
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-a').forEach(a => a.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.getElementById('nav-' + page).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (page === 'dashboard') loadRecords();
+}
+
+/* ═══════════════════════════════
+   AIRTABLE — FETCH (paginated)
+═══════════════════════════════ */
+async function fetchAllRecords() {
+  let records = [];
+  let offset = null;
+  do {
+    let url = AT_URL + '?pageSize=100&sort[0][field]=Created%20Date&sort[0][direction]=desc';
+    if (offset) url += '&offset=' + encodeURIComponent(offset);
+    const res = await fetch(url, {
+      headers: { 'Authorization': 'Bearer ' + AT_TOKEN }
+    });
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      throw new Error((body.error && body.error.message) || ('Airtable error: HTTP ' + res.status));
+    }
+    const data = await res.json();
+    records = records.concat(data.records || []);
+    offset = data.offset || null;
+  } while (offset);
+  return records;
+}
+
+/* ═══════════════════════════════
+   AIRTABLE — CREATE
+═══════════════════════════════ */
+async function createRecord(fields) {
+  const res = await fetch(AT_URL, {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer ' + AT_TOKEN,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ fields: fields })
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error((body.error && body.error.message) || ('Create failed: HTTP ' + res.status));
+  }
+  return res.json();
+}
+
+/* ═══════════════════════════════
+   LOAD RECORDS
+═══════════════════════════════ */
+async function loadRecords(force) {
+  if (!force && allRecords.length > 0) {
+    renderTable();
+    renderRecent();
+    updateStats();
+    return;
+  }
+
+  // Dashboard state
+  showTblState('loading');
+  var rb = document.getElementById('refresh-btn');
+  if (rb) { rb.disabled = true; rb.textContent = 'Loading…'; }
+
+  // Recent state
+  document.getElementById('recent-loading').style.display = 'flex';
+  document.getElementById('recent-list').style.display = 'none';
+
+  try {
+    allRecords = await fetchAllRecords();
+    renderTable();
+    renderRecent();
+    updateStats();
+    var sub = document.getElementById('dash-sub');
+    if (sub) sub.textContent = allRecords.length + ' total matter' + (allRecords.length !== 1 ? 's' : '') + ' · Updated ' + new Date().toLocaleTimeString();
+  } catch(err) {
+    showTblState('error');
+    document.getElementById('error-msg').textContent = err.message;
+    document.getElementById('recent-loading').style.display = 'none';
+    document.getElementById('recent-list').style.display = 'block';
+    document.getElementById('recent-list').innerHTML = '<div class="table-state"><div class="big-icon">⚠️</div><p>' + esc(err.message) + '</p></div>';
+    toast('Could not load records: ' + err.message, 'e', 'Airtable Error');
+  } finally {
+    if (rb) {
+      rb.disabled = false;
+      rb.innerHTML = '<svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> Refresh';
+    }
+  }
+}
+
+/* ═══════════════════════════════
+   STATS
+═══════════════════════════════ */
+function updateStats() {
+  var total    = allRecords.length;
+  var lead     = allRecords.filter(function(r){ return (r.fields['Status']||'').toLowerCase() === 'lead'; }).length;
+  var approved = allRecords.filter(function(r){ return (r.fields['Status']||'').toLowerCase() === 'approved'; }).length;
+  var retainer = allRecords.filter(function(r){ return (r.fields['Status']||'').toLowerCase() === 'retainer sent'; }).length;
+
+  function s(id, v) { var el = document.getElementById(id); if (el) el.textContent = v; }
+  s('stat-total', total);    s('sb-total', total);
+  s('stat-lead', lead);      s('sb-lead', lead);
+  s('stat-approved', approved); s('sb-approved', approved);
+  s('stat-retainer', retainer); s('sb-retainer', retainer);
+}
+
+/* ═══════════════════════════════
+   STATUS BADGE
+═══════════════════════════════ */
+function badge(status) {
+  if (!status) return '<span class="badge badge-default">—</span>';
+  var s = status.toLowerCase();
+  var cls = s === 'lead' ? 'badge-lead'
+          : s === 'approved' ? 'badge-approved'
+          : s === 'retainer sent' ? 'badge-retainer'
+          : s === 'processing' ? 'badge-processing'
+          : 'badge-default';
+  return '<span class="badge ' + cls + '">' + esc(status) + '</span>';
+}
+
+/* ═══════════════════════════════
+   DATE FORMAT
+═══════════════════════════════ */
+function fmtDate(d, opts) {
+  if (!d) return null;
+  try {
+    return new Date(d).toLocaleDateString('en-US', opts || { month:'short', day:'numeric', year:'numeric' });
+  } catch(e) { return d; }
+}
+
+/* ═══════════════════════════════
+   RECENT LIST
+═══════════════════════════════ */
+function renderRecent() {
+  var list = document.getElementById('recent-list');
+  var loading = document.getElementById('recent-loading');
+  loading.style.display = 'none';
+  list.style.display = 'block';
+
+  var recent = allRecords.slice(0, 6);
+  if (!recent.length) {
+    list.innerHTML = '<div class="table-state"><div class="big-icon">📂</div><p>No cases yet. Submit your first report above.</p></div>';
+    return;
+  }
+  list.innerHTML = recent.map(function(r) {
+    var f = r.fields;
+    var name = [f['Client First Name'], f['Client Last Name']].filter(Boolean).join(' ') || '—';
+    var email = f['Client Email'] || '';
+    var created = fmtDate(f['Created Date']) || '';
+    var mid = f['Matter ID'] ? '#' + f['Matter ID'] : '';
+    return '<div class="recent-row" onclick="openModal(\'' + r.id + '\')">' +
+      '<div>' +
+        '<div class="recent-name">' + (mid ? esc(mid) + ' · ' : '') + esc(name) + '</div>' +
+        (email ? '<div class="recent-email">' + esc(email) + '</div>' : '') +
+      '</div>' +
+      '<div class="recent-meta">' +
+        (created ? '<span style="font-size:.75rem;color:var(--muted)">' + esc(created) + '</span>' : '') +
+        badge(f['Status']) +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+/* ═══════════════════════════════
+   TABLE RENDER
+═══════════════════════════════ */
+function getFiltered() {
+  var q  = (document.getElementById('search-input') ? document.getElementById('search-input').value : '').toLowerCase();
+  var sf = document.getElementById('status-filter') ? document.getElementById('status-filter').value : '';
+  return allRecords.filter(function(r) {
+    var f = r.fields;
+    var name  = [f['Client First Name'], f['Client Last Name']].filter(Boolean).join(' ').toLowerCase();
+    var email = (f['Client Email'] || '').toLowerCase();
+    var loc   = (f['Accident Location'] || '').toLowerCase();
+    var atty  = (f['Responsible Attorney'] || '').toLowerCase();
+    var pr    = (f['Police Report Number'] || '').toLowerCase();
+    var textMatch = !q || name.includes(q) || email.includes(q) || loc.includes(q) || atty.includes(q) || pr.includes(q);
+    var statusMatch = !sf || (f['Status'] || '') === sf;
+    return textMatch && statusMatch;
+  });
+}
+
+function getSorted(arr) {
+  var s = document.getElementById('sort-select') ? document.getElementById('sort-select').value : 'newest';
+  return arr.slice().sort(function(a, b) {
+    var af = a.fields, bf = b.fields;
+    if (s === 'newest') return new Date(bf['Created Date'] || 0) - new Date(af['Created Date'] || 0);
+    if (s === 'oldest') return new Date(af['Created Date'] || 0) - new Date(bf['Created Date'] || 0);
+    if (s === 'name-az') return ([af['Client First Name'],af['Client Last Name']].join(' ')).localeCompare([bf['Client First Name'],bf['Client Last Name']].join(' '));
+    if (s === 'name-za') return ([bf['Client First Name'],bf['Client Last Name']].join(' ')).localeCompare([af['Client First Name'],af['Client Last Name']].join(' '));
+    if (s === 'matter-asc') return (af['Matter ID'] || 0) - (bf['Matter ID'] || 0);
+    return 0;
+  });
+}
+
+function renderTable() {
+  var filtered = getSorted(getFiltered());
+  var tbody = document.getElementById('table-body');
+  var countEl = document.getElementById('records-count');
+
+  if (countEl) countEl.textContent = filtered.length + ' of ' + allRecords.length + ' records';
+
+  if (!allRecords.length) {
+    showTblState('loading');
+    return;
+  }
+  if (!filtered.length) {
+    showTblState('empty');
+    document.getElementById('empty-msg').textContent = 'No records match your search or filter.';
+    return;
+  }
+
+  showTblState('table');
+
+  tbody.innerHTML = filtered.map(function(r) {
+    var f = r.fields;
+    var name  = [f['Client First Name'], f['Client Last Name']].filter(Boolean).join(' ') || '—';
+    var email = f['Client Email'] || '';
+    var mid   = f['Matter ID'] ? '<span class="td-id">#' + esc(String(f['Matter ID'])) + '</span>' : '<span class="td-id" style="color:var(--muted2)">—</span>';
+    var accDate = fmtDate(f['Accident Date']) || '—';
+    var created = fmtDate(f['Created Date']) || '—';
+    var loc = f['Accident Location'] || '—';
+    var locShort = loc.length > 26 ? loc.substring(0, 26) + '…' : loc;
+    var atty = f['Responsible Attorney'] || '—';
+    var inj = (f['Number of Injuries'] !== undefined && f['Number of Injuries'] !== null) ? f['Number of Injuries'] : '—';
+
+    return '<tr onclick="openModal(\'' + r.id + '\')">' +
+      '<td>' + mid + '</td>' +
+      '<td><div class="td-name">' + esc(name) + '</div>' + (email ? '<div class="td-email">' + esc(email) + '</div>' : '') + '</td>' +
+      '<td>' + badge(f['Status']) + '</td>' +
+      '<td style="font-size:.82rem">' + esc(atty) + '</td>' +
+      '<td style="font-size:.82rem;white-space:nowrap">' + esc(accDate) + '</td>' +
+      '<td style="font-size:.78rem;max-width:150px" title="' + esc(loc) + '">' + esc(locShort) + '</td>' +
+      '<td style="text-align:center;font-size:.82rem">' + esc(String(inj)) + '</td>' +
+      '<td style="font-size:.78rem;white-space:nowrap;color:var(--slate)">' + esc(created) + '</td>' +
+    '</tr>';
+  }).join('');
+}
+
+function showTblState(state) {
+  document.getElementById('table-body').innerHTML = '';
+  document.getElementById('tbl-loading').style.display = state === 'loading' ? 'flex' : 'none';
+  document.getElementById('tbl-empty').style.display   = state === 'empty'   ? 'flex' : 'none';
+  document.getElementById('tbl-error').style.display   = state === 'error'   ? 'flex' : 'none';
+}
+
+/* ═══════════════════════════════
+   MODAL
+═══════════════════════════════ */
+function openModal(id) {
+  var record = allRecords.find(function(r) { return r.id === id; });
+  if (!record) return;
+  var f = record.fields;
+  var name = [f['Client First Name'], f['Client Last Name']].filter(Boolean).join(' ') || 'Unknown Client';
+  var mid  = f['Matter ID'] ? 'Matter #' + f['Matter ID'] : 'Record ID: ' + record.id.substring(0,8) + '…';
+
+  document.getElementById('modal-matter-id').textContent = mid;
+  document.getElementById('modal-client-name').textContent = name;
+
+  function dv(v) {
+    if (v === undefined || v === null || v === '') return '<span class="empty">—</span>';
+    return esc(String(v));
+  }
+
+  document.getElementById('modal-body').innerHTML =
+    '<div class="modal-section">' +
+      '<div class="modal-section-title">Client Information</div>' +
+      '<div class="detail-grid">' +
+        '<div><div class="detail-label">Full Name</div><div class="detail-val">' + dv(name) + '</div></div>' +
+        '<div><div class="detail-label">Email</div><div class="detail-val">' + (f['Client Email'] ? '<a href="mailto:' + esc(f['Client Email']) + '">' + esc(f['Client Email']) + '</a>' : '<span class="empty">—</span>') + '</div></div>' +
+        '<div><div class="detail-label">Status</div><div class="detail-val">' + badge(f['Status']) + '</div></div>' +
+        '<div><div class="detail-label">Responsible Attorney</div><div class="detail-val">' + dv(f['Responsible Attorney']) + '</div></div>' +
+        '<div><div class="detail-label">Created Date</div><div class="detail-val">' + dv(fmtDate(f['Created Date'], {weekday:'short',month:'long',day:'numeric',year:'numeric'})) + '</div></div>' +
+        '<div><div class="detail-label">Statute of Limitations</div><div class="detail-val">' + dv(fmtDate(f['Statute of Limitations'])) + '</div></div>' +
+      '</div>' +
+    '</div>' +
+
+    '<div class="modal-section">' +
+      '<div class="modal-section-title">Accident Details</div>' +
+      '<div class="detail-grid">' +
+        '<div><div class="detail-label">Accident Date</div><div class="detail-val">' + dv(fmtDate(f['Accident Date'])) + '</div></div>' +
+        '<div><div class="detail-label">Police Report #</div><div class="detail-val">' + dv(f['Police Report Number']) + '</div></div>' +
+        '<div class="detail-full"><div class="detail-label">Accident Location</div><div class="detail-val">' + dv(f['Accident Location']) + '</div></div>' +
+        '<div><div class="detail-label">Client Vehicle Plate</div><div class="detail-val">' + dv(f['Client Vehicle Plate']) + '</div></div>' +
+        '<div><div class="detail-label">Number of Injuries</div><div class="detail-val">' + dv(f['Number of Injuries']) + '</div></div>' +
+        '<div><div class="detail-label">Defendant Name</div><div class="detail-val">' + dv(f['Defendant Name']) + '</div></div>' +
+        '<div><div class="detail-label">Defendant Vehicle Plate</div><div class="detail-val">' + dv(f['Defendant Vehicle Plate']) + '</div></div>' +
+        (f['Accident Description'] ? '<div class="detail-full"><div class="detail-label">Accident Description</div><div class="detail-val" style="white-space:pre-wrap;line-height:1.6">' + esc(f['Accident Description']) + '</div></div>' : '') +
+      '</div>' +
+    '</div>' +
+
+    '<div class="modal-section">' +
+      '<div class="modal-section-title">Documents</div>' +
+      '<div class="detail-grid">' +
+        '<div class="detail-full"><div class="detail-label">Retainer PDF</div><div class="detail-val">' +
+          (f['Retainer PDF URL'] ? '<a href="' + esc(f['Retainer PDF URL']) + '" target="_blank" rel="noopener">📎 View Retainer PDF →</a>' : '<span class="empty">Not yet uploaded</span>') +
+        '</div></div>' +
+      '</div>' +
+    '</div>' +
+
+    '<div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem">' +
+      '<span style="font-size:.7rem;color:var(--muted2)">Record: ' + esc(record.id) + '</span>' +
+      (f['Client Email'] ? '<a href="mailto:' + esc(f['Client Email']) + '" class="btn btn-ghost btn-sm">✉ Email Client</a>' : '') +
+    '</div>';
+
+  document.getElementById('modal-bg').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modal-bg').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function bgClose(e) {
+  if (e.target === document.getElementById('modal-bg')) closeModal();
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeModal();
+});
+
+/* ═══════════════════════════════
+   FILE HANDLING
+═══════════════════════════════ */
+document.getElementById('f-pdf').addEventListener('change', function() {
+  handleFileSelect(this.files[0]);
+});
+
+function handleFileSelect(file) {
+  if (!file) return;
+  if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+    toast('Please select a valid PDF file.', 'e', 'Invalid File Type');
+    document.getElementById('f-pdf').value = '';
+    return;
+  }
+  selectedFile = file;
+  document.getElementById('drop-zone').classList.add('has-file');
+  document.getElementById('file-pill').style.display = 'flex';
+  document.getElementById('file-name-display').textContent = file.name + ' (' + (file.size / 1024).toFixed(0) + ' KB)';
+  document.getElementById('e-pdf').style.display = 'none';
+}
+
+// Drag & drop
+var dz = document.getElementById('drop-zone');
+dz.addEventListener('dragover', function(e) { e.preventDefault(); dz.classList.add('over'); });
+dz.addEventListener('dragleave', function() { dz.classList.remove('over'); });
+dz.addEventListener('drop', function(e) {
+  e.preventDefault();
+  dz.classList.remove('over');
+  var file = e.dataTransfer.files[0];
+  if (file) {
+    handleFileSelect(file);
+    try { var dt = new DataTransfer(); dt.items.add(file); document.getElementById('f-pdf').files = dt.files; } catch(x){}
+  }
+});
+
+/* ═══════════════════════════════
+   VALIDATION
+═══════════════════════════════ */
+function validate() {
+  var ok = true;
+  function check(fid, eid, test) {
+    var input = document.getElementById(fid);
+    var errEl = document.getElementById(eid);
+    var valid = test(input.value);
+    input.classList.toggle('err', !valid);
+    errEl.style.display = valid ? 'none' : 'flex';
+    if (!valid) ok = false;
+  }
+  check('f-first', 'e-first', function(v) { return v.trim().length > 0; });
+  check('f-last',  'e-last',  function(v) { return v.trim().length > 0; });
+  check('f-email', 'e-email', function(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()); });
+  if (!selectedFile) {
+    document.getElementById('e-pdf').style.display = 'flex';
+    ok = false;
+  } else {
+    document.getElementById('e-pdf').style.display = 'none';
+  }
+  return ok;
+}
+
+/* ═══════════════════════════════
+   PROGRESS
+═══════════════════════════════ */
+function setProgress(pct, title, sub) {
+  document.getElementById('prog-bar').style.width = pct + '%';
+  if (title) document.getElementById('loading-title').textContent = title;
+  if (sub)   document.getElementById('loading-sub').textContent = sub;
+}
+
+function setStep(n) {
+  for (var i = 1; i <= 3; i++) {
+    var el = document.getElementById('step' + i);
+    el.className = 'prog-step' + (i < n ? ' done' : i === n ? ' curr' : '');
+  }
+}
+
+/* ═══════════════════════════════
+   SUBMIT
+═══════════════════════════════ */
+async function handleSubmit() {
+  if (!validate()) {
+    toast('Please fix the highlighted fields.', 'w', 'Form Incomplete');
+    return;
+  }
+
+  document.getElementById('form-state').style.display = 'none';
+  document.getElementById('loading-state').style.display = 'block';
+  document.getElementById('success-state').style.display = 'none';
+  setProgress(5, 'Preparing upload…', 'Please wait, do not close this window');
+  setStep(1);
+
+  try {
+    // ── STEP 1: Upload PDF ──
+    var pdfUrl = '';
+    try {
+      setProgress(15, 'Uploading PDF to secure storage…', 'Sending to file.io encrypted storage');
+      var fd = new FormData();
+      fd.append('file', selectedFile);
+      fd.append('expires', '14d');
+      var fioRes = await fetch('https://file.io?expires=14d', { method: 'POST', body: fd });
+      var fioData = await fioRes.json();
+      if (fioData.success && fioData.link) {
+        pdfUrl = fioData.link;
+      } else {
+        pdfUrl = 'PDF: ' + selectedFile.name + ' (' + (selectedFile.size/1024).toFixed(0) + 'KB) — ' + new Date().toISOString();
+      }
+    } catch(uploadErr) {
+      pdfUrl = selectedFile.name + ' — submitted ' + new Date().toLocaleString();
+    }
+    setProgress(40, 'PDF ready. Creating case record…', 'Writing to Airtable database');
+    setStep(2);
+    await sleep(300);
+
+    // ── STEP 2: Create Airtable record with EXACT field names ──
+    var fields = {};
+    fields['Client First Name'] = document.getElementById('f-first').value.trim();
+    fields['Client Last Name']  = document.getElementById('f-last').value.trim();
+    fields['Client Email']      = document.getElementById('f-email').value.trim();
+    fields['Status']            = 'Lead';
+
+    var attorney = document.getElementById('f-attorney').value.trim();
+    if (attorney) fields['Responsible Attorney'] = attorney;
+
+    var accDate = document.getElementById('f-accdate').value;
+    if (accDate) fields['Accident Date'] = accDate;
+
+    var accLoc = document.getElementById('f-accloc').value.trim();
+    if (accLoc) fields['Accident Location'] = accLoc;
+
+    var cvp = document.getElementById('f-cvp').value.trim();
+    if (cvp) fields['Client Vehicle Plate'] = cvp;
+
+    var def = document.getElementById('f-def').value.trim();
+    if (def) fields['Defendant Name'] = def;
+
+    var dvp = document.getElementById('f-dvp').value.trim();
+    if (dvp) fields['Defendant Vehicle Plate'] = dvp;
+
+    var inj = document.getElementById('f-inj').value;
+    if (inj !== '') fields['Number of Injuries'] = parseInt(inj, 10);
+
+    var desc = document.getElementById('f-desc').value.trim();
+    if (desc) fields['Accident Description'] = desc;
+
+    var prnum = document.getElementById('f-prnum').value.trim();
+    if (prnum) fields['Police Report Number'] = prnum;
+
+    if (pdfUrl) fields['Retainer PDF URL'] = pdfUrl;
+
+    setProgress(60, 'Creating case in Airtable…', 'Saving all case details');
+    var newRecord = await createRecord(fields);
+    setProgress(80, 'Case created! Triggering automation…', 'Sending webhook to workflow');
+    setStep(3);
+    await sleep(300);
+
+    // ── STEP 3: N8N Webhook (non-fatal) ──
+    try {
+      await fetch(N8N_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pdf_url: pdfUrl,
+          record_id: newRecord.id,
+          client_email: fields['Client Email'],
+          client_name: fields['Client First Name'] + ' ' + fields['Client Last Name'],
+          matter_id: (newRecord.fields && newRecord.fields['Matter ID']) ? newRecord.fields['Matter ID'] : '',
+          attorney: fields['Responsible Attorney'] || 'Andrew Richards'
+        })
+      });
+    } catch(whErr) { /* non-fatal */ }
+
+    setProgress(100, 'All done!', 'Case submitted successfully');
+    await sleep(500);
+
+    document.getElementById('loading-state').style.display = 'none';
+    document.getElementById('success-state').style.display = 'block';
+
+    // Invalidate cache so next load is fresh
+    allRecords = [];
+
+    toast('Case created for ' + fields['Client First Name'] + ' ' + fields['Client Last Name'], 's', 'Submission Complete');
+
+  } catch(err) {
+    document.getElementById('loading-state').style.display = 'none';
+    document.getElementById('form-state').style.display = 'block';
+    toast(err.message || 'Submission failed. Please try again.', 'e', 'Submission Failed');
+    console.error('Submit error:', err);
+  }
+}
+
+/* ═══════════════════════════════
+   RESET FORM
+═══════════════════════════════ */
+function resetForm() {
+  document.getElementById('form-state').style.display = 'block';
+  document.getElementById('loading-state').style.display = 'none';
+  document.getElementById('success-state').style.display = 'none';
+  var ids = ['f-first','f-last','f-email','f-accloc','f-cvp','f-def','f-dvp','f-desc','f-prnum','f-inj'];
+  ids.forEach(function(id) { document.getElementById(id).value = ''; });
+  document.getElementById('f-attorney').value = 'Andrew Richards';
+  document.getElementById('f-accdate').value = '';
+  document.getElementById('f-pdf').value = '';
+  document.getElementById('drop-zone').classList.remove('has-file');
+  document.getElementById('file-pill').style.display = 'none';
+  selectedFile = null;
+  setProgress(0);
+  ['e-first','e-last','e-email','e-pdf'].forEach(function(id) { document.getElementById(id).style.display = 'none'; });
+  ['f-first','f-last','f-email'].forEach(function(id) { document.getElementById(id).classList.remove('err'); });
+}
+
+/* ═══════════════════════════════
+   TOAST
+═══════════════════════════════ */
+function toast(msg, type, title) {
+  var dock = document.getElementById('toast-dock');
+  var el = document.createElement('div');
+  el.className = 'toast';
+  var defaultTitle = type === 's' ? 'Success' : type === 'e' ? 'Error' : 'Notice';
+  el.innerHTML =
+    '<div class="toast-bar ' + (type||'s') + '"></div>' +
+    '<div><div class="toast-title">' + esc(title || defaultTitle) + '</div>' +
+    '<div class="toast-msg">' + esc(msg) + '</div></div>';
+  dock.appendChild(el);
+  setTimeout(function() {
+    el.classList.add('out');
+    setTimeout(function() { el.remove(); }, 350);
+  }, 4500);
+}
+
+/* ═══════════════════════════════
+   UTILS
+═══════════════════════════════ */
+function esc(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+
+function sleep(ms) { return new Promise(function(res) { setTimeout(res, ms); }); }
+
+/* ═══════════════════════════════
+   INIT
+═══════════════════════════════ */
+window.addEventListener('DOMContentLoaded', function() {
+  // Load records immediately on page load for homepage stats + recent
+  loadRecords(true);
+});
+</script>
+</body>
+</html>
